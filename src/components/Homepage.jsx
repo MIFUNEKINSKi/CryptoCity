@@ -2,6 +2,7 @@ import React from 'react';
 import millify from 'millify';
 import { Typography, Row, Col, Statistic } from 'antd';
 import { Link } from 'react-router-dom';
+import News from './News'
 
 import { useGetCryptosQuery } from '../services/cryptoApi';
 import Cryptocurrencies from './Cryptocurrencies';
@@ -10,7 +11,7 @@ import Cryptocurrencies from './Cryptocurrencies';
 const { Title } = Typography
 const Homepage = () => {
   const { data, isFetching } = useGetCryptosQuery(10);
-  console.log(data)
+  if (isFetching) return "Loading..."
   const globalStats = data?.data?.stats;
   return (
     <>
@@ -32,7 +33,7 @@ const Homepage = () => {
         <Title level={2} className="home-title">Latest Crypto News</Title>
         <Title level={3}><Link to="/news">Show more</Link></Title>
       </div>
-      {/* <News simplified /> */}
+      <News simplified />
     </>
   )
 }
