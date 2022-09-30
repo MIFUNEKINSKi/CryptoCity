@@ -1,6 +1,6 @@
 
 import React from 'react'
-import { Routes, Route, Link} from 'react-router-dom';
+import { Routes, Route} from 'react-router-dom';
 import { Layout, Typography, Space } from 'antd';
 import { GithubOutlined, LinkedinOutlined, BuildOutlined } from '@ant-design/icons';
 
@@ -30,7 +30,7 @@ const App = () => {
                   Christopher Moore <br />
               
               </Typography.Title>
-            <img style={{ maxWidth: "200px", maxHeight: "100px" }} src={require('./images/Chris.jpeg')} className='team-pics' />
+            <img style={{ maxWidth: "200px", maxHeight: "100px", borderRadius: "50%", padding: "1px 1px", backgroundColor: "#FFF" }} src={require('./images/Chris.jpeg')} alt="profile"/>
               <Space>
 
     
