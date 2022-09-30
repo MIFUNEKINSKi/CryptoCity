@@ -1,71 +1,151 @@
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+![CryptoCity](src/images/MainPage.gif)
+___
+interactive Crypto dashboard to create data visualizations.  (Redux, ReactJS, Axios) 	 It was created using the following: 
 
-## Available Scripts
 
-In the project directory, you can run:
+* API's: BingNewsSearch, CoinRanking
+* Frontend: React-Redux
+* API Calls: Axios
+* Hosting: Netlify
+* Languages: Javascript, CSS, HTML
 
-### `npm start`
+Check out the site [here](https://cryptocityapp.netlify.app/). 
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## MVP Features
+### 1. Homepage
+Intuitive homepage where you can see all available components.  Can click into any with "Show More" to get additional information.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+![Browsing Homepage](src/images/MainPage.gif)
 
-### `npm test`
+### 2. Api fetching
+Upon clicking "Show More" on the homepage for cryptos, you are taken to the full crypto page.  The top 100 cryptos currently.  There you can filter down by typing which type of coin you want to look at.  Once selected, click the coin to look at the individual coin details, and see charts of it's value over time. 
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+![CryptoFilter](src/images/cryptofilter.gif)
+![Chart](src/images/chart.gif)
 
-### `npm run build`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Using Redux queries and React hooks to dynamically update functional components with state dependencies and mapping over data with react components. Also implementing custom loading react component while API is fetching to create seamless search results.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```javascript
+  const CryptoDetails = () => {
+  const { coinId } = useParams();
+  const [timeperiod, setTimeperiod] = useState('7d');
+  const { data, isFetching } = useGetCryptoDetailsQuery(coinId);
+  const { data: coinHistory } = useGetCryptoHistoryQuery({ coinId, timeperiod });
+  const cryptoDetails = data?.data?.coin;
+//   console.log(coinHistory)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+  if (isFetching) return <Loader />;
 
-### `npm run eject`
+  const time = ['3h', '24h', '7d', '30d', '1y', '3m', '3y', '5y'];
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+  const stats = [
+    { title: 'Price to USD', value: `$ ${cryptoDetails?.price && millify(cryptoDetails?.price)}`, icon: <DollarCircleOutlined /> },
+    { title: 'Rank', value: cryptoDetails?.rank, icon: <NumberOutlined /> },
+    { title: '24h Volume', value: `$ ${cryptoDetails?.["24hVolume"] && millify(cryptoDetails?.["24hVolume"])}`, icon: <ThunderboltOutlined /> },
+    { title: 'Market Cap', value: `$ ${cryptoDetails?.marketCap && millify(cryptoDetails?.marketCap)}`, icon: <DollarCircleOutlined /> },
+    { title: 'All-time-high(daily avg.)', value: `$ ${cryptoDetails?.allTimeHigh?.price && millify(cryptoDetails?.allTimeHigh?.price)}`, icon: <TrophyOutlined /> },
+  ];
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+  const genericStats = [
+    { title: 'Number Of Markets', value: cryptoDetails?.numberOfMarkets, icon: <FundOutlined /> },
+    { title: 'Number Of Exchanges', value: cryptoDetails?.numberOfExchanges, icon: <MoneyCollectOutlined /> },
+    { title: 'Aprroved Supply', value: cryptoDetails?.supply?.confirmed ? <CheckOutlined /> : <StopOutlined />, icon: <ExclamationCircleOutlined /> },
+    { title: 'Total Supply', value: `$ ${cryptoDetails?.supply?.total && millify(cryptoDetails?.supply?.total)}`, icon: <ExclamationCircleOutlined /> },
+    { title: 'Circulating Supply', value: `$ ${cryptoDetails?.supply?.circulating && millify(cryptoDetails?.supply?.circulating)}`, icon: <ExclamationCircleOutlined /> },
+  ];
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### 3. Coin filtering
+If on the homepage there is a simplified version of the crypto information, only 10 coins.  On the main coin page however, it expands to 100. Used dynamic logic to show either simplified or non simplified version. 
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```javascript
+  const count = simplified ? 10 : 100;
+  const { data: cryptosList, isFetching } = useGetCryptosQuery(count);
+  const [cryptos, setCryptos] = useState();
+  const [searchTerm, setSearchTerm] = useState('');
 
-## Learn More
+  useEffect(() => {
+    setCryptos(cryptosList?.data?.coins);
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+    const filteredData = cryptosList?.data?.coins.filter((item) => item.name.toLowerCase().includes(searchTerm));
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+    setCryptos(filteredData);
+  }, [cryptosList, searchTerm]);
 
-### Code Splitting
+  if (isFetching) return <Loader />;
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+  return (
+    <>
+      {!simplified && (
+        <div className="search-crypto">
+          <Input
+            placeholder="Search Cryptocurrency"
+            onChange={(e) => setSearchTerm(e.target.value.toLowerCase())}
+          />
+        </div>
+      )}
+```
 
-### Analyzing the Bundle Size
+### 4. News
+Filter news about specific cryptos by filtering and using state.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+```javascript
+ <Select
+            showSearch
+            className="select-news"
+            placeholder="Select a Crypto"
+            optionFilterProp="children"
+            onChange={(value) => setNewsCategory(value)}
+            filterOption={(input, option) => option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+          >
+            <Option value="Cryptocurency">Cryptocurrency</Option>
+            {data?.data?.coins?.map((currency) => <Option value={currency.name}>{currency.name}</Option>)}
+          </Select>
+```
 
-### Making a Progressive Web App
+![Searching for News](src/images/news.gif)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### 5. Chart
+Dynamically add chart data by category to arrays, that are then implemented into React ChartJS
 
-### Advanced Configuration
+```javascript
+        const coinPrice = [];
+  const coinTimestamp = [];
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+  for (let i = 0; i < coinHistory?.data?.history?.length; i += 1) {
+    coinPrice.push(coinHistory?.data?.history[i].price);
+  }
 
-### Deployment
+  for (let i = 0; i < coinHistory?.data?.history?.length; i += 1) {
+    coinTimestamp.push(new Date(coinHistory?.data?.history[i].timestamp*1000).toLocaleDateString());
+  }
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+    const data = {
+        labels: coinTimestamp,
+        datasets: [
+            {
+                label: 'Price In USD',
+                data: coinPrice,
+                fill: false,
+                backgroundColor: '#0071bd',
+                borderColor: '#0071bd',
+            },
+        ],
+    };
 
-### `npm run build` fails to minify
+    const options = {
+        scales: {
+            yAxes: [
+                {
+                    ticks: {
+                        beginAtZero: true,
+                    },
+                },
+            ],
+        },
+    };
+```
+![Line Chart](src/images/chart.gif)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
-# CryptoCity
