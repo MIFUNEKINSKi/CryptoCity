@@ -2,9 +2,11 @@
 import React from 'react'
 import { Routes, Route, Link} from 'react-router-dom';
 import { Layout, Typography, Space } from 'antd';
+import { GithubOutlined, LinkedinOutlined, BuildOutlined } from '@ant-design/icons';
 
 import { Navbar, Homepage, Cryptocurrencies, News, Cryptodetails } from "./components";
 import './App.css'
+
 
 const App = () => {
   return (
@@ -25,13 +27,17 @@ const App = () => {
             </Layout>
           <div className='footer'>
               <Typography.Title level={5} style={{color: 'white', textAlign: 'center'}}>
-                  CryptoCity <br />
-                  All rights reserved
+                  Christopher Moore <br />
+              
               </Typography.Title>
+            <img style={{ maxWidth: "200px", maxHeight: "100px" }} src={require('./images/Chris.jpeg')} className='team-pics' />
               <Space>
-                <Link to='/'> My Github </Link>
-                <Link to='/'> Exchanges </Link>
-                <Link to='/'> News </Link>
+
+    
+                  
+            <a href='https://github.com/MIFUNEKINSKi'> My Github <GithubOutlined /> </a>
+            <a href='https://www.linkedin.com/in/chris-moore-27438989/'> My LinkedIn <LinkedinOutlined /> </a>
+            <a href='//www.chris-moore.info'> My Website <BuildOutlined /></a>
               </Space>
           </div>
         </div>
