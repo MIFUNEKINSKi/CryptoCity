@@ -22,7 +22,6 @@ Intuitive homepage where you can see all available components.  Can click into a
 Upon clicking "Show More" on the homepage for cryptos, you are taken to the full crypto page.  The top 100 cryptos currently.  There you can filter down by typing which type of coin you want to look at.  Once selected, click the coin to look at the individual coin details, and see charts of it's value over time. 
 
 ![CryptoFilter](src/images/cryptofilter.gif)
-![Chart](src/images/chart.gif)
 
 
 Using Redux queries and React hooks to dynamically update functional components with state dependencies and mapping over data with react components. Also implementing custom loading react component while API is fetching to create seamless search results.
