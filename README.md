@@ -148,3 +148,9 @@ Dynamically add chart data by category to arrays, that are then implemented into
 ```
 ![Line Chart](src/images/chart.gif)
 
+### BONUS
+
+Fully mobile capable with dynamic menu. 
+
+![Mobile](src/images/mobile.gif)
+
